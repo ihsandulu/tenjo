@@ -166,6 +166,15 @@
 
                                 <b class="arrow"></b>
                             </li>
+
+                            <li class="">
+                                <a href="<?=site_url("telpon");?>">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Telephone
+                                </a>
+
+                                <b class="arrow"></b>
+                            </li>
                         </ul>
                     </li>
 					
