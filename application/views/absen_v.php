@@ -135,10 +135,10 @@ require_once("header.php");
 								function kirimpesan(message,number,server){
 									// alert("<?=$url;?>?message="+message+"&number="+number+"&id="+server);
 									$.get("<?=$url;?>",{message:message,number:number,id:server})
-									.done(function(data){									
-										$swa=data;
-										// $swa="Whatsapp Terkirim!";
-										$("#statuswa").html($swa);
+									.done(function(data){								
+										// let swa=data;
+										let swa="Whatsapp Terkirim!";
+										$("#statuswa").html(swa);
 										// alert(data);
 									});
 								}

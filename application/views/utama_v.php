@@ -49,14 +49,19 @@
                             </strong> [&copy; <?=date("Y");?>].
                         </div>
                         <div class="alert alert-block alert-success row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <a href="<?=base_url("absen?type=1&color=green;");?>" class="btn btn-block btn-success">
                                     Absensi Masuk
                                 </a>   
                             </div> 
-                            <div class="col-md-6">                        
+                            <div class="col-md-4">                        
                                 <a href="<?=base_url("absen?type=2&color=orange;");?>" class="btn btn-block btn-warning">
                                     Absensi Keluar
+                                </a>   
+                            </div>   
+                            <div class="col-md-4">                        
+                                <a href="<?=base_url("pelunasanwa?color=blue;");?>" class="btn btn-block btn-primary">
+                                    Alert Pelunasan
                                 </a>   
                             </div>                            
                         </div>

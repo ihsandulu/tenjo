@@ -1,6 +1,8 @@
 <?php
 if (!defined('BASEPATH')) exit('No direct script access allowed');
 
+date_default_timezone_set("Asia/Bangkok");
+
 /*
 * sebelum update script mohon synch code dulu
 */
@@ -1064,6 +1066,169 @@ class api extends CI_Controller {
 		}
 		$this->djson($data);
 	}
+
+	public function tablepelunasanwa(){
+		?>
+		<table class="table table-striped">
+			<thead>
+			<tr>
+				<th>Sekolah</th>
+				<th>Date Time</th>
+				<th>Siswa</th>
+				<th>Telpon</th>
+				<th>Nominal</th>
+				<th>Tipe</th>
+			</tr>
+			</thead>
+			<tbody>
+			<?php 
+			$where["pelunasanwa_date"]=date("Y-m-d");
+			$pelunasanwa=$this->db
+			->join("sekolah","sekolah.sekolah_id=pelunasanwa.sekolah_id","left")
+			->join("user","user.user_id=pelunasanwa.user_id","left")
+			->order_by("pelunasanwa_datetime","desc")
+			->get_where("pelunasanwa",$where);
+			// echo $this->db->last_query();
+			foreach ($pelunasanwa->result() as $pelunasanwa) {
+				if($pelunasanwa->pelunasanwa_type==1){$type="Ortu";}else{$type="Murid";}
+			?>
+			<tr>
+				<td><?=$pelunasanwa->sekolah_name;?></td>
+				<td><?=$pelunasanwa->pelunasanwa_datetime;?></td>
+				<td><?=$pelunasanwa->user_name;?></td>
+				<td><?=$pelunasanwa->pelunasanwa_telpon;?></td>
+				<td><?=number_format($pelunasanwa->pelunasanwa_nominal,0,",",".");?></td>
+				<td><?=$type;?></td>
+			</tr>	
+			<?php }?>		
+			</tbody>
+		</table>
+		<?php
+	}
+
+	
+
+	public function tagihpelunasan(){
+
+		$data=array();
+
+		//hari terakhir kirim pesan
+		$pelunasanwa=$this->db
+		->where("sekolah_id",$this->session->userdata("sekolah_id"))
+		->order_by("pelunasanwa_id","desc")
+		->limit(1)
+		->get("pelunasanwa");	
+		// echo $this->db->last_query();
+		$tgl1=date("Y-m-d");
+		foreach ($pelunasanwa->result() as $pelunasanwa) {
+			$tgl1=$pelunasanwa->pelunasanwa_date;
+		}
+
+		//selisih waktu
+		$tgl1 = strtotime($tgl1); 
+		$tgl2 = strtotime(date("Y-m-d")); 
+		$jarak = $tgl2 - $tgl1;
+		$hari = $jarak / 60 / 60 / 24;
+		
+		// Output: Total selisih hari: 10398
+		// $data["sisahari"]=$hari;
+		
+		$timewa=$this->db
+		->where("sekolah_id",$this->session->userdata("sekolah_id"))
+		->get("timewa");	
+		foreach ($timewa->result() as $timewa) {
+			$pesan=$timewa->timewa_message;
+			$timewa_day=$timewa->timewa_day;
+			$timewa_time=date("H:i",strtotime($timewa->timewa_time));
+		}		
+		// $data["jam"]=$timewa_time;
+		// $data['note']=$hari."==".$timewa_day ."&&". $timewa_time."==".date("H:i");
+		if($_GET["filter"]==0){
+			$hari=0;
+			$timewa_day=0;
+			$timewa_time=date("H:i");
+		}
+		if($hari==$timewa_day && $timewa_time==date("H:i")){	
+
+			$transaction=$this->db
+			->select("SUM(transaction_amount)AS kredit")
+			->where("sekolah_id",$this->session->userdata("sekolah_id"))
+			->where("transaction_type","Kredit")
+			->group_by("sekolah_id")
+			->get("transaction");
+			$kredit=0;	
+			foreach ($transaction->result() as $transaction) {
+				$kredit.=$transaction->kredit;
+			}
+
+			$telpon=$this->db
+			->join("user","user.user_id=telpon.user_id","left")
+			->join("server","server.sekolah_id=telpon.sekolah_id","left")
+			->where("telpon.sekolah_id",$this->session->userdata("sekolah_id"))
+			->get("telpon");	
+			// echo $this->db->last_query();
+			foreach ($telpon->result() as $telpon) {
+				$message="";
+				$transactionsiswa=$this->db
+				->select("SUM(transaction_amount)AS debet")
+				->where("sekolah_id",$this->session->userdata("sekolah_id"))
+				->where("user_nisn",$telpon->user_nisn)
+				->where("transaction_type","Debet")
+				->group_by("user_nisn")
+				->get("transaction");
+				// echo $this->db->last_query();
+				$debet=0;	
+				foreach ($transactionsiswa->result() as $transactionsiswa) {
+					$debet.=$transactionsiswa->debet;
+				}
+				$nominal1=$kredit-$debet;
+				$nominal=number_format($nominal1,0,",",".");
+				$message1=str_replace("#siswa",$telpon->user_name,$pesan);
+				$message=str_replace("#nominal",$nominal,$message1);
+				$number=$telpon->telpon_number;
+				$server=$telpon->server_name;
+				$user_id=$telpon->user_id;
+				
+				$data1["message"]=$message;
+				$data1["number"]=$number;
+				$data1["server"]=$server;
+				$data1["nominal"]=$nominal1;
+				$data1["user_id"]=$user_id;
+				$data[]=$data1;
+			}
+			
+		}else{
+			$data1["message"]="";
+			$data1["number"]="";
+			$data1["server"]="";
+			$data1["nominal"]="";
+			$data1["user_id"]="";
+		}
+		$this->djson($data);
+	}
+
+	public function insertpesan(){	
+			
+		$user=$this->db
+		->where("user_id",$this->input->get("user_id"))
+		->get("telpon");
+		// echo $this->db->last_query();	
+		foreach($user->result() as $user){
+			$input["pelunasanwa_date"]=date("Y-m-d");			
+			$input["user_id"]=$user->user_id;			
+			$input["pelunasanwa_nominal"]=$this->input->get("nominal");	
+			$input["sekolah_id"]=$this->session->userdata("sekolah_id");			
+			$input["pelunasanwa_telpon"]=$user->telpon_number;	
+			$input["pelunasanwa_type"]=$user->telpon_type;
+			//cek double
+			$pelunasanwa=$this->db
+			->get_where("pelunasanwa",$input);
+			echo $rows=$pelunasanwa->num_rows();
+			if($rows==0){
+				$this->db->insert("pelunasanwa",$input);
+			}
+		}				
+	}
 	
 	private function djson($value=array()) {
 		$json = json_encode($value);
@@ -1073,6 +1238,7 @@ class api extends CI_Controller {
 		$this->output->set_content_type('application/json');
 		$this->output->set_output($json);
 	}
+
 	
 	/*
 	function send_gcm_notify($reg_id, $title, $message, $img_url, $tag) {
