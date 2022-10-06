@@ -3,6 +3,9 @@
 
 <head>
     <?php require_once("meta.php");?>
+	<style>
+		.halaman{margin-top:5px !important; margin-bottom:5px !important;}
+	</style>
 	<?php
 	if($s>0){
 	?>
@@ -230,8 +233,43 @@
 											  </script>
 											</form> 
 										</div>	
-										<?php }?>		
-                                        <table id="dataTable" class="table table-condensed table-hover">
+										<?php }?>
+										<?php  
+										if(isset($_POST['from'])&&$_POST['from']!=""){
+											$this->db->where("SUBSTR(transaction_datetime,1,10) >=",$this->input->post("from"));
+										} 
+										if(isset($_POST['to'])&&$_POST['to']!=""){
+											$this->db->where("SUBSTR(transaction_datetime,1,10) <=",$this->input->post("to"));
+										}
+										if(isset($_POST['type'])&&$_POST['type']!=""){
+											$this->db->where("transaction_type",$this->input->post("type"));
+										}
+										if(isset($_POST['kelas'])&&$_POST['kelas']!=""&&isset($_POST['type'])&&$_POST['type']!="Debet"){
+											$this->db->where("transaction.kelas_id",$this->input->post("kelas"));
+										}
+										if($this->session->userdata("sekolah_id")>0){
+											$this->db->where("transaction.sekolah_id",$this->session->userdata("sekolah_id"));
+										}													
+										if($this->session->userdata("position_id")==4){
+											$this->db->where("transaction.user_nisn",$this->session->userdata("user_nisn"));
+											$this->db->or_where("transaction.transaction_type","Kredit");
+										}
+
+										$halaman = 200; //batasan halaman
+										$page = isset($_GET['halaman'])? (int)$_GET["halaman"]:1;
+										$mulai = ($page>1) ? ($page * $halaman) - $halaman : 0;
+										$totalhalaman=$this->db
+										->join("sekolah","sekolah.sekolah_id=transaction.sekolah_id","left")
+										->join("user","user.user_nik=transaction.`user_nik` AND user.user_nisn=transaction.user_nisn","left")                                                ->order_by("transaction_datetime","desc")
+										// ->limit($halaman,$mulai)
+										->get("transaction");
+										//echo $this->db->last_query();
+										$total = $totalhalaman->num_rows();
+										$pages = ceil($total/$halaman); 
+										for ($i=1; $i<=$pages ; $i++){ ?>
+											<a class="btn btn-xs btn-default halaman" href="?halaman=<?php echo $i; ?>"><?php echo $i; ?></a>
+										<?php } ?>		
+                                        <table id="dataTabletransaksi" class="table table-condensed table-hover">
                                             <thead>
                                                 <tr>
                                                   <th>Date</th>
@@ -252,32 +290,13 @@
                                                 </tr>
                                             </thead>
                                             <tbody> 
-                                                <?php  
-												if(isset($_POST['from'])&&$_POST['from']!=""){
-													$this->db->where("SUBSTR(transaction_datetime,1,10) >=",$this->input->post("from"));
-												} 
-												if(isset($_POST['to'])&&$_POST['to']!=""){
-													$this->db->where("SUBSTR(transaction_datetime,1,10) <=",$this->input->post("to"));
-												}
-												if(isset($_POST['type'])&&$_POST['type']!=""){
-													$this->db->where("transaction_type",$this->input->post("type"));
-												}
-												if(isset($_POST['kelas'])&&$_POST['kelas']!=""&&isset($_POST['type'])&&$_POST['type']!="Debet"){
-													$this->db->where("transaction.kelas_id",$this->input->post("kelas"));
-												}
-												if($this->session->userdata("sekolah_id")>0){
-													$this->db->where("transaction.sekolah_id",$this->session->userdata("sekolah_id"));
-												}													
-												if($this->session->userdata("position_id")==4){
-													$this->db->where("transaction.user_nisn",$this->session->userdata("user_nisn"));
-													$this->db->or_where("transaction.transaction_type","Kredit");
-												}
-												
+                                                <?php
 												$usr=$this->db
-                                                ->join("sekolah","sekolah.sekolah_id=transaction.sekolah_id","left")
-                                                ->join("user","user.user_nik=transaction.`user_nik` AND user.user_nisn=transaction.user_nisn","left")                                                ->order_by("transaction_datetime","desc")
+												->join("sekolah","sekolah.sekolah_id=transaction.sekolah_id","left")
+												->join("user","user.user_nik=transaction.`user_nik` AND user.user_nisn=transaction.user_nisn","left")                                                ->order_by("transaction_datetime","desc")
+												->order_by("transaction_datetime", "desc")
+												->limit($halaman,$mulai)
 												->get("transaction");
-												//echo $this->db->last_query();
                                                 foreach($usr->result() as $transaction){
 												if($transaction->user_nisn==""){$back="background-color:#FEDCC5";}else{$back="";}?>
                                                 <tr style="<?=$back;?>">
@@ -316,7 +335,17 @@
                                                 <?php }?>
                                             </tbody>
                                         </table>
-										
+										<?php
+										for ($i=1; $i<=$pages ; $i++){ ?>
+											<a class="btn btn-xs btn-default halaman" href="?halaman=<?php echo $i; ?>"><?php echo $i; ?></a>
+										<?php } ?>	
+										<script>
+											$(document).ready(function() {
+												$('#dataTabletransaksi').DataTable( {
+												"lengthMenu": [[200, "All", 100, 50, 25], [200, "All", 100, 50, 25]]
+												} );
+											} );
+										</script>
                                       </div>
                                     </div>
                                 <?php }?>
