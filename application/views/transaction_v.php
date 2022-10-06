@@ -342,7 +342,8 @@
 										<script>
 											$(document).ready(function() {
 												$('#dataTabletransaksi').DataTable( {
-												"lengthMenu": [[200, "All", 100, 50, 25], [200, "All", 100, 50, 25]]
+													"order": [[0, 'desc']],
+													"lengthMenu": [[200, "All", 100, 50, 25], [200, "All", 100, 50, 25]]
 												} );
 											} );
 										</script>
