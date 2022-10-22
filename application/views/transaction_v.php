@@ -27,13 +27,13 @@
 	});
 	</script>
 	<script>
-	function line(a) {
+	function line(a,tahun) {
 		var txt;
 		var line = prompt("Enter the line:", "");
 		if (line == null || line == "") {
 			alert("Line cannot empty");
 		} else {
-			var win = window.open('<?=site_url("transactionprint?print=OK&transaction_id=");?>'+a+'&line='+line, '_blank');
+			var win = window.open('<?=site_url("transactionprint?print=OK&transaction_id=");?>'+a+'&line='+line+'&transaction_tahun='+tahun, '_blank');
 			win.focus();
 		}
 	}
@@ -101,7 +101,7 @@
                                         </div>							  
                                     </div>
                                     
-        							<div class="form-group">
+        							<!-- <div class="form-group">
                                         <label class="control-label col-sm-2" for="kelas_id">Kelas:</label>
                                         <div class="col-sm-10">
                                           <select tabindex="2" type="kelas_id" class="form-control" id="kelas_id" name="kelas_id">
@@ -114,6 +114,20 @@
 											  foreach($kelas->result() as $kelas){?>
 											  <option value="<?=$kelas->kelas_id;?>" <?=($kelas_id==$kelas->kelas_id)?"selected":"";?>>
 												<?=$kelas->kelas_name;?>
+											  </option>
+											  <?php }?>
+										  </select>
+                                        </div>							  
+                                    </div> -->
+									<div class="form-group">
+                                        <label class="control-label col-sm-2" for="transaction_tahun">Tahun Ajaran Masuk:</label>
+                                        <div class="col-sm-10">
+                                          <select tabindex="2" type="transaction_tahun" class="form-control" id="transaction_tahun" name="transaction_tahun">
+											  <option value="<?=date("Y");?>" <?=($transaction_tahun=="")?"selected":"";?>>Tahun Ini (<?=date("Y");?>)</option>
+											  <?php 
+											  for($x=(date("Y")-5);$x<=date("Y");$x++){?>
+											  <option value="<?=$x;?>" <?=($transaction_tahun==$x)?"selected":"";?>>
+												<?=$x;?>
 											  </option>
 											  <?php }?>
 										  </select>
@@ -182,7 +196,7 @@
                                     <?php }?>
                                     <div class="box">
                                         <div id="collapse4" class="body table-responsive">
-										<?php if(isset($_GET['laporan'])){?>
+										<?php //if(isset($_GET['laporan'])){?>
 										<div class="col-md-12" style="border:#FDDABB dashed 1px; margin-bottom:30px; padding:10px;">
 											 <form id="sp" method="post" target="_blank" class="form-inline" action="<?=site_url("transactionreport_print");?>">
 											  <div class="form-group">
@@ -221,11 +235,15 @@
 												<label for="from">To:</label>
 												<input id="to" name="to" type="date" value="<?=$this->input->post("to");?>"/>
 											  </div>										  
-											  <button type="submit" class="btn btn-success fa fa-search" onMouseOver="search()"> Search</button>	
+											 <!--  <button type="submit" class="btn btn-success fa fa-search" onMouseOver="search()"> Search</button> -->											  
+											  <button type="submit" class="btn btn-success fa fa-search" onMouseOver="searchnormal()"> Search</button>	
 											  <button type="submit" class="btn btn-info fa fa-print" onMouseOver="print()"> Print</button>
 											  <script>
 												  function search(){
 												  	$("#sp").attr({"action":"<?=site_url("transaction?laporan=OK");?>","target":"_self"});
+												  }
+												  function searchnormal(){
+												  	$("#sp").attr({"action":"<?=site_url("transaction");?>","target":"_self"});
 												  }
 												  function print(){
 												  	$("#sp").attr({"action":"<?=site_url("transactionreport_print");?>","target":"_blank"});
@@ -233,7 +251,7 @@
 											  </script>
 											</form> 
 										</div>	
-										<?php }?>
+										<?php //}?>
 										<?php  
 										if(isset($_POST['from'])&&$_POST['from']!=""){
 											$this->db->where("SUBSTR(transaction_datetime,1,10) >=",$this->input->post("from"));
@@ -260,10 +278,11 @@
 										$mulai = ($page>1) ? ($page * $halaman) - $halaman : 0;
 										$totalhalaman=$this->db
 										->join("sekolah","sekolah.sekolah_id=transaction.sekolah_id","left")
-										->join("user","user.user_nik=transaction.`user_nik` AND user.user_nisn=transaction.user_nisn","left")                                                ->order_by("transaction_datetime","desc")
+										->join("user","user.user_nik=transaction.`user_nik` AND user.user_nisn=transaction.user_nisn","left")                                                
+										->order_by("transaction_datetime","desc")
 										// ->limit($halaman,$mulai)
 										->get("transaction");
-										//echo $this->db->last_query();
+										// echo $this->db->last_query();
 										$total = $totalhalaman->num_rows();
 										$pages = ceil($total/$halaman); 
 										for ($i=1; $i<=$pages ; $i++){ ?>
@@ -278,7 +297,7 @@
                                                     <th>NISN/NIK</th>
                                                     <th>Transaction Name</th>
                                                     <th>Amount</th>
-                                                    <th>Type</th>
+                                                    <th>Type/<br/>Thn.Ajaran</th>
 													<?php if(isset($_GET['laporan'])){
 													$colact="col-md-1";
 													$colbtn="col-md-12";
@@ -291,14 +310,40 @@
                                             </thead>
                                             <tbody> 
                                                 <?php
+												if(isset($_POST['from'])&&$_POST['from']!=""){
+													$this->db->where("SUBSTR(transaction_datetime,1,10) >=",$this->input->post("from"));
+												} 
+												if(isset($_POST['to'])&&$_POST['to']!=""){
+													$this->db->where("SUBSTR(transaction_datetime,1,10) <=",$this->input->post("to"));
+												}
+												if(isset($_POST['type'])&&$_POST['type']!=""){
+													$this->db->where("transaction_type",$this->input->post("type"));
+												}
+												if(isset($_POST['kelas'])&&$_POST['kelas']!=""&&isset($_POST['type'])&&$_POST['type']!="Debet"){
+													$this->db->where("transaction.kelas_id",$this->input->post("kelas"));
+												}
+												if($this->session->userdata("sekolah_id")>0){
+													$this->db->where("transaction.sekolah_id",$this->session->userdata("sekolah_id"));
+												}													
+												if($this->session->userdata("position_id")==4){
+													$this->db->where("transaction.user_nisn",$this->session->userdata("user_nisn"));
+													$this->db->or_where("transaction.transaction_type","Kredit");
+												}
 												$usr=$this->db
 												->join("sekolah","sekolah.sekolah_id=transaction.sekolah_id","left")
-												->join("user","user.user_nik=transaction.`user_nik` AND user.user_nisn=transaction.user_nisn","left")                                                ->order_by("transaction_datetime","desc")
+												->join("user","user.user_nik=transaction.`user_nik` AND user.user_nisn=transaction.user_nisn","left")                                                
+												->order_by("transaction_datetime","desc")
 												->order_by("transaction_datetime", "desc")
 												->limit($halaman,$mulai)
 												->get("transaction");
                                                 foreach($usr->result() as $transaction){
-												if($transaction->user_nisn==""){$back="background-color:#FEDCC5";}else{$back="";}?>
+												if($transaction->user_nisn==""){$back="background-color:#FEDCC5";}else{$back="";}
+												if($transaction->transaction_type=="Kredit"){
+													$tahunajaran=$transaction->transaction_tahun;
+												}else{
+													$tahunajaran=$transaction->user_tahunajaran;
+												}
+												?>
                                                 <tr style="<?=$back;?>">
                                                   <td><?=$transaction->transaction_datetime;?></td>											
                                                     <td><?=$transaction->sekolah_name;?></td>
@@ -306,11 +351,13 @@
                                                     <td><?=$transaction->user_nisn;?></td>
                                                   <td><?=$transaction->transaction_name;?></td>	
                                                   <td align="right"><?=number_format($transaction->transaction_amount,0,",",".");?></td>
-                                                  <td><?=$transaction->transaction_type;?></td>	
+                                                  <td>
+														<?=$transaction->transaction_type;?><br/>(<?=$tahunajaran;?>)
+													</td>	
                                                     <td style="padding-left:0px; padding-right:0px;" align="center">
                                                     	<?php if($transaction->transaction_type=="Debet"){?> 
                                                         <form target="_blank" action="<?=site_url("transactionprint");?>" method="get" class="<?=$colbtn;?>" style="padding:0px;">
-                                                            <button type="button" onClick="line('<?=$transaction->transaction_id;?>')" class="btn btn-success btn-xs btn-block" name="print" value="OK"><span class="fa fa-print" style="color:white;"></span> </button>
+                                                            <button type="button" onClick="line('<?=$transaction->transaction_id;?>','<?=$transaction->user_tahunajaran;?>')" class="btn btn-success btn-xs btn-block" name="print" value="OK"><span class="fa fa-print" style="color:white;"></span> </button>
                                                             <input type="hidden" name="transaction_id" value="<?=$transaction->transaction_id;?>"/>
                                                         </form>	
 														<?php $longkap="";}else{$longkap="col-md-offset-4";}?> 

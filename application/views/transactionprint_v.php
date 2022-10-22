@@ -66,6 +66,7 @@
 				//->where("kelas_id",$user->kelas_id)
 				//->or_where("kelas_id",0)
 				//->group_end()
+				->where("transaction_tahun",$this->input->get("transaction_tahun"))
 				->where("transaction_type","Kredit")
 				->group_by("sekolah_id")
 				->get("transaction");
@@ -81,7 +82,7 @@
 				->get("transaction");
 				//echo $this->db->last_query();
 				if($pembayaran->num_rows()>0){$pembayaran=$pembayaran->row()->pembayaran;}else{$pembayaran=0;}
-				
+				// echo $tagihan."<br/>";
 				$saldo=$tagihan-$pembayaran;
 				
 				echo number_format($saldo,0,",",".");

@@ -130,6 +130,7 @@
                                             <thead>
                                                 <tr>
                                                   <th>School</th>
+                                                    <th>Thn. Ajaran</th>
                                                     <th>NISN</th>
                                                     <th>Name</th>
                                                     <th>Number</th>
@@ -155,7 +156,8 @@
                                                     if($telpon->telpon_type==1){$type="Ortu";}else{$type="Murid";}
                                                 ?>
                                                 <tr>
-                                                  <td><?=$telpon->sekolah_name;?></td>											
+                                                  <td><?=$telpon->sekolah_name;?></td>								
+                                                    <td><?=$user->user_tahunajaran;?></td>												
                                                     <td><?=$telpon->user_nisn;?></td>											
                                                     <td><?=$telpon->user_name;?></td>
                                                     <td><?=$telpon->telpon_number;?></td>

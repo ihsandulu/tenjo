@@ -46,6 +46,21 @@
                                     <?php if(isset($_POST['edit'])){$namabutton='name="change"';$judul="Update Student";}else{$namabutton='name="create"';$judul="New Student";}?>	
                                     <div class="lead"><h3><?=$judul;?></h3></div>
                                     <form class="form-horizontal" method="post" enctype="multipart/form-data">
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-2" for="user_tahunajaran">Tahun Ajaran Masuk:</label>
+                                        <div class="col-sm-10">
+                                          <select tabindex="2" type="user_tahunajaran" class="form-control" id="user_tahunajaran" name="user_tahunajaran">
+                                            <option value="<?=date("Y");?>" <?=($user_tahunajaran=="")?"selected":"";?>>Tahun Ini (<?=date("Y");?>)</option>
+                                            <?php 
+                                            for($x=(date("Y")-5);$x<=date("Y");$x++){?>
+                                            <option value="<?=$x;?>" <?=($user_tahunajaran==$x)?"selected":"";?>>
+                                            <?=$x;?>
+                                            </option>
+                                            <?php }?>
+                                          </select>
+                                        </div>							  
+                                    </div>
                                       
                                       <div class="form-group">
                                         <label class="control-label col-sm-2" for="user_nisn">NISN:</label>
@@ -160,14 +175,18 @@
                                         </div>
                                         </form>
                                         <div class="well col-md-offset-1 col-md-5" style="padding:30px; height:210px;" align="center">
-                                        <a target="_blank" href="<?=base_url("telpon.xlsx");?>" class="fa fa-download btn btn-lg btn-success" style="top:50%; position:relative; top:50%; transform:translate(0,-50%);"/> Download Excel Template</a>
+                                        <a target="_blank" href="<?=base_url("siswa.xlsx");?>" class="fa fa-download btn btn-lg btn-success" style="top:50%; position:relative; top:50%; transform:translate(0,-50%);"/> Download Excel Template</a>
                                         </div>
+                                        <form method="post" style="float:right; margin-bottom:20px;">
+                                          <button name="repair_tahun_ajaran" value="OK">Repair Tahun Ajaran Sesuai Kelas</button>
+                                        </form>
                                        
                                         <div id="collapse4" class="body table-responsive col-md-12">				
                                         <table id="dataTable" class="table table-condensed table-hover">
                                             <thead>
                                                 <tr>
                                                   <th>School</th>
+                                                    <th>Thn. Ajaran</th>
                                                     <th>NISN</th>
                                                     <th>Class</th>
                                                     <th>Name</th>
@@ -189,6 +208,7 @@
                                                 foreach($usr->result() as $user){?>
                                                 <tr>
                                                   <td><?=$user->sekolah_name;?></td>											
+                                                    <td><?=$user->user_tahunajaran;?></td>												
                                                     <td><?=$user->user_nisn;?></td>											
                                                     <td><?=$user->kelas_name;?></td>
                                                     <td><?=$user->user_name;?></td>

@@ -82,6 +82,7 @@ class Siswa_M extends CI_Model {
 					$input["user_name"] = $arr_data[$x]["C"];
 					$input["kelas_id"] = $arr_data[$x]["D"];
 					$input["user_password"] = $arr_data[$x]["E"];
+					$input["user_tahunajaran"] = $arr_data[$x]["F"];
 					$input["position_id"] = "4";
 			 
 					// setelah data dibaca, masukkan ke tabel siswa sql
@@ -156,6 +157,26 @@ class Siswa_M extends CI_Model {
 			$data["message"]="Update Success";
 			//echo $this->db->last_query();die;
 		}
+
+		//repair tahuan ajaran menyesuaikan kelas
+		if($this->input->post("repair_tahun_ajaran")=="OK"){
+			$us=$this->db
+			->join("transaction","transaction.kelas_id=user.kelas_id","left")
+			->where("user_tahunajaran","0")
+			->where("user.kelas_id >","0")
+			->limit(5000)
+			->get('user');	
+			// echo $this->db->last_query();die;	
+			$data["message"]="Process ".$us->num_rows()." data";
+			foreach($us->result() as $user){
+				$input["user_tahunajaran"]=	$user->transaction_tahun;	
+				$this->db->update("user",$input,array("user_id"=>$user->user_id));
+				// $data["message"]="Update Success";
+				// echo $this->db->last_query();die;
+			}
+			
+		}
+
 		return $data;
 	}
 	
