@@ -1148,27 +1148,22 @@ class api extends CI_Controller {
 			$timewa_day=0;
 			$timewa_time=date("H:i");
 		}
-		if($hari==$timewa_day && $timewa_time==date("H:i")){	
-
-			$transaction=$this->db
-			->select("SUM(transaction_amount)AS kredit")
-			->where("sekolah_id",$this->session->userdata("sekolah_id"))
-			->where("transaction_type","Kredit")
-			->group_by("sekolah_id")
-			->get("transaction");
-			$kredit=0;	
-			foreach ($transaction->result() as $transaction) {
-				$kredit.=$transaction->kredit;
-			}
+		if($hari==$timewa_day && $timewa_time==date("H:i")){			
 
 			$telpon=$this->db
 			->join("user","user.user_id=telpon.user_id","left")
+			->join("(SELECT SUM(transaction_amount)AS kredit,transaction_tahun FROM transaction WHERE transaction_type='Kredit' AND sekolah_id=".$this->session->userdata("sekolah_id")." GROUP BY sekolah_id,transaction_tahun)As transaction","transaction.transaction_tahun=user.user_tahunajaran","left")
 			->join("server","server.sekolah_id=telpon.sekolah_id","left")
 			->where("telpon.sekolah_id",$this->session->userdata("sekolah_id"))
 			->get("telpon");	
 			// echo $this->db->last_query();
 			foreach ($telpon->result() as $telpon) {
 				$message="";
+
+				
+				$kredit=$telpon->kredit;
+
+
 				$transactionsiswa=$this->db
 				->select("SUM(transaction_amount)AS debet")
 				->where("sekolah_id",$this->session->userdata("sekolah_id"))

@@ -234,6 +234,14 @@
 											   <div class="form-group">
 												<label for="from">To:</label>
 												<input id="to" name="to" type="date" value="<?=$this->input->post("to");?>"/>
+											  </div>			
+											   <div class="form-group">
+												<label for="nisn">NISN:</label>
+												<input id="nisn" name="nisn" type="text" value="<?=$this->input->post("nisn");?>"/>
+											  </div>			
+											   <div class="form-group">
+												<label for="nama">Nama:</label>
+												<input id="nama" name="nama" type="text" value="<?=$this->input->post("nama");?>"/>
 											  </div>										  
 											 <!--  <button type="submit" class="btn btn-success fa fa-search" onMouseOver="search()"> Search</button> -->											  
 											  <button type="submit" class="btn btn-success fa fa-search" onMouseOver="searchnormal()"> Search</button>	
@@ -253,6 +261,12 @@
 										</div>	
 										<?php //}?>
 										<?php  
+										if(isset($_POST['nisn'])&&$_POST['nisn']!=""){
+											$this->db->where("user_nisn",$this->input->post("nisn"));
+										} 
+										if(isset($_POST['nama'])&&$_POST['nama']!=""){
+											$this->db->like("user_name",$this->input->post("nama"),"both");
+										} 
 										if(isset($_POST['from'])&&$_POST['from']!=""){
 											$this->db->where("SUBSTR(transaction_datetime,1,10) >=",$this->input->post("from"));
 										} 
@@ -310,6 +324,12 @@
                                             </thead>
                                             <tbody> 
                                                 <?php
+												if(isset($_POST['nisn'])&&$_POST['nisn']!=""){
+													$this->db->where("user_nisn",$this->input->post("nisn"));
+												} 
+												if(isset($_POST['nama'])&&$_POST['nama']!=""){
+													$this->db->like("user_name",$this->input->post("nama"),"both");
+												} 
 												if(isset($_POST['from'])&&$_POST['from']!=""){
 													$this->db->where("SUBSTR(transaction_datetime,1,10) >=",$this->input->post("from"));
 												} 
