@@ -1152,16 +1152,17 @@ class api extends CI_Controller {
 
 			$telpon=$this->db
 			->join("user","user.user_id=telpon.user_id","left")
-			->join("(SELECT SUM(transaction_amount)AS kredit,transaction_tahun FROM transaction WHERE transaction_type='Kredit' AND sekolah_id=".$this->session->userdata("sekolah_id")." GROUP BY sekolah_id,transaction_tahun)As transaction","transaction.transaction_tahun=user.user_tahunajaran","left")
+			->join("(SELECT SUM(transaction_amount)AS kreditnya,transaction_tahun FROM transaction WHERE transaction_type='Kredit' AND sekolah_id=".$this->session->userdata("sekolah_id")." GROUP BY sekolah_id,transaction_tahun)As transaction","transaction.transaction_tahun=user.user_tahunajaran","left")
 			->join("server","server.sekolah_id=telpon.sekolah_id","left")
 			->where("telpon.sekolah_id",$this->session->userdata("sekolah_id"))
+            ->where("user.position_id","4")
 			->get("telpon");	
 			// echo $this->db->last_query();
 			foreach ($telpon->result() as $telpon) {
 				$message="";
 
 				
-				$kredit=$telpon->kredit;
+				$kredit=$telpon->kreditnya;
 
 
 				$transactionsiswa=$this->db

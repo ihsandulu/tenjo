@@ -151,13 +151,13 @@
                                                 ->join("sekolah","sekolah.sekolah_id=user.sekolah_id","left")
                                                 ->where("user.position_id","4")
                                                 ->get("telpon");
-												//echo $this->db->last_query();
+												// echo $this->db->last_query();
                                                 foreach($telpon->result() as $telpon){
                                                     if($telpon->telpon_type==1){$type="Ortu";}else{$type="Murid";}
                                                 ?>
                                                 <tr>
                                                   <td><?=$telpon->sekolah_name;?></td>								
-                                                    <td><?=$user->user_tahunajaran;?></td>												
+                                                    <td><?=$telpon->user_tahunajaran;?></td>												
                                                     <td><?=$telpon->user_nisn;?></td>											
                                                     <td><?=$telpon->user_name;?></td>
                                                     <td><?=$telpon->telpon_number;?></td>

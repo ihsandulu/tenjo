@@ -197,12 +197,14 @@ require_once("header.php");
                                 
                                 //kirim sekarang
                                 function kirimsekarang(){
-                                    //alert("<?=base_url("api/tagihpelunasan");?>?filter=0");
+                                    // alert("<?=base_url("api/tagihpelunasan");?>?filter=0");
                                     $.get("<?=base_url("api/tagihpelunasan");?>",{filter:0})
                                     .done(function(data){
                                         $.each( data, function( key, value ) {
                                             // alert(value.message+','+value.number+','+value.server+','+value.nominal);
-                                            kirimpesan(value.message,value.number,value.server,value.nominal,value.user_id);
+                                            if(value.user_id>0){
+                                                kirimpesan(value.message,value.number,value.server,value.nominal,value.user_id);
+                                            }
                                         });
                                     });
                                 }
