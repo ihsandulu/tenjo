@@ -142,6 +142,7 @@
 										  <div id="profil" style="color:#000066;"></div>
                                         <script>
 										function profil(){
+											// alert('<?=site_url("api/datasiswahutang");?>?user_nisn='+$("#user_nisn").val()+'&sekolah_id='+<?=$this->session->userdata("sekolah_id");?>);
 											$.get("<?=site_url("api/datasiswahutang");?>",{user_nisn:$("#user_nisn").val(),sekolah_id:'<?=$this->session->userdata("sekolah_id");?>'})
 											.done(function(data){
 												$("#profil").html(data);
@@ -262,7 +263,7 @@
 										<?php //}?>
 										<?php  
 										if(isset($_POST['nisn'])&&$_POST['nisn']!=""){
-											$this->db->where("user_nisn",$this->input->post("nisn"));
+											$this->db->where("transaction.user_nisn",$this->input->post("nisn"));
 										} 
 										if(isset($_POST['nama'])&&$_POST['nama']!=""){
 											$this->db->like("user_name",$this->input->post("nama"),"both");
@@ -325,7 +326,7 @@
                                             <tbody> 
                                                 <?php
 												if(isset($_POST['nisn'])&&$_POST['nisn']!=""){
-													$this->db->where("user_nisn",$this->input->post("nisn"));
+													$this->db->where("transaction.user_nisn",$this->input->post("nisn"));
 												} 
 												if(isset($_POST['nama'])&&$_POST['nama']!=""){
 													$this->db->like("user_name",$this->input->post("nama"),"both");
@@ -353,9 +354,9 @@
 												->join("sekolah","sekolah.sekolah_id=transaction.sekolah_id","left")
 												->join("user","user.user_nik=transaction.`user_nik` AND user.user_nisn=transaction.user_nisn","left")                                                
 												->order_by("transaction_datetime","desc")
-												->order_by("transaction_datetime", "desc")
 												->limit($halaman,$mulai)
 												->get("transaction");
+												// echo $this->db->last_query();
                                                 foreach($usr->result() as $transaction){
 												if($transaction->user_nisn==""){$back="background-color:#FEDCC5";}else{$back="";}
 												if($transaction->transaction_type=="Kredit"){

@@ -36,6 +36,7 @@ class api extends CI_Controller {
 		//->or_where("kelas_id",0)
 		//->group_end()
 		->where("transaction_type","Kredit")
+		->where("transaction_tahun",$user->row()->user_tahunajaran)
 		->group_by("sekolah_id")
 		->get("transaction");
 		//echo $this->db->last_query();

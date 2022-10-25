@@ -70,7 +70,7 @@
 				->where("transaction_type","Kredit")
 				->group_by("sekolah_id")
 				->get("transaction");
-				//echo $this->db->last_query();
+				// echo $this->db->last_query();
 				if($tagihan->num_rows()>0){$tagihan=$tagihan->row()->tagihan;}else{$tagihan=0;}
 				
 				//pembayaran
