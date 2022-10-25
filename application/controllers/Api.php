@@ -21,7 +21,7 @@ class api extends CI_Controller {
 	   
   	function datasiswahutang(){
 		//user
-		$whereuser["user_nisn"]=$this->input->get("user_nisn");
+		$whereuser["user_nisn"]=trim($this->input->get("user_nisn"));
 		$whereuser["sekolah_id"]=$this->input->get("sekolah_id");
 		$user=$this->db
 		->join("kelas","kelas.kelas_id=user.kelas_id","left")

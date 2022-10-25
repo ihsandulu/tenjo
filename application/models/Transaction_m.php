@@ -67,9 +67,10 @@ class transaction_M extends CI_Model {
 		}
 		
 		$data["s"]=0;
+		$data["tahun"]=0;
 		//insert
 		if($this->input->post("create")=="OK"){
-			foreach($this->input->post() as $e=>$f){if($e!='create'){$input[$e]=$this->input->post($e);}}
+			foreach($this->input->post() as $e=>$f){if($e!='create'){$input[$e]=trim($this->input->post($e));}}
 			if($input["transaction_type"]=="Kredit"){
 				$data["s"]=0;
 				$double=$this->db
@@ -85,13 +86,22 @@ class transaction_M extends CI_Model {
 			}else{
 					$this->db->insert("transaction",$input);
 					$data["message"]="Insert Data Success";	
-					$data["s"]=$this->db->insert_id();						
+					$data["s"]=$this->db->insert_id();	
+					
+					//tahunajaran
+					$whereuser["user_nisn"]=$input["user_nisn"];
+					$whereuser["sekolah_id"]=$input["sekolah_id"];
+					$user=$this->db
+					->get_where("user",$whereuser);
+					// echo $this->db->last_query();die;
+					if($user->num_rows()>0){$datatahun=$user->row()->user_tahunajaran;}else{$datatahun=0;}
+					$data["tahun"]=$datatahun;						
 			}
 		}
 		//echo $_POST["create"];die;
 		//update
 		if($this->input->post("change")=="OK"){
-			foreach($this->input->post() as $e=>$f){if($e!='change'&&$e!='transaction_picture'){$input[$e]=$this->input->post($e);}}
+			foreach($this->input->post() as $e=>$f){if($e!='change'&&$e!='transaction_picture'){$input[$e]=trim($this->input->post($e));}}
 			$this->db->update("transaction",$input,array("transaction_id"=>$this->input->post("transaction_id")));
 			$data["message"]="Update Success";
 			//echo $this->db->last_query();die;

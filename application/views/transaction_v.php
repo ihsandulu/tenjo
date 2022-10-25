@@ -11,7 +11,7 @@
 	?>
 			<script>
 			$(document).ready(function(){
-				line('<?=$s;?>');
+				line('<?=$s;?>','<?=$tahun;?>');
 			});
 			</script>
 	<?php }?>
