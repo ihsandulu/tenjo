@@ -394,7 +394,7 @@
                                                         </form>
                                                     
                                                         <form method="post" class="col-md-4" style="padding:0px;">
-                                                            <button class="btn btn-danger delete btn-xs btn-block" name="delete" value="OK"><span class="fa fa-close" style="color:white;"></span> </button>
+                                                            <button class="btn btn-danger delete btn-xs btn-block" name="delete" value="OK" onclick="return confirm('Are you sure you want to delete this item?');"><span class="fa fa-close" style="color:white;"></span> </button>
                                                             <input type="hidden" name="transaction_id" value="<?=$transaction->transaction_id;?>"/>
                                                         </form>	
 														<?php }?>										
