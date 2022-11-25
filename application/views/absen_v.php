@@ -126,23 +126,9 @@ require_once("header.php");
 									$("#tableabsen").html(data);
 								});
 							}
-							</script>							
-							<script>
-								<?php 		
-								$url = "https://qithy.my.id:8000/send-message";
-								// $url = "http://localhost:8000/send-message";
-								?>
-								function kirimpesan(message,number,server){
-									// alert("<?=$url;?>?message="+message+"&number="+number+"&id="+server);
-									$.get("<?=$url;?>",{message:message,number:number,id:server})
-									.done(function(data){								
-										// let swa=data;
-										let swa="Whatsapp Terkirim!";
-										$("#statuswa").html(swa);
-										// alert(data);
-									});
-								}
-							</script>
+							</script>	
+													
+							
 							<script>
 							function cektelpon(name,typename,datetime,number,id){
 								let pesanwa='Ananda '+name+' telah '+typename+' pada '+datetime;
@@ -156,7 +142,7 @@ require_once("header.php");
 									});
 								});
 							}
-                            function qrcodesiswa(nisn){            
+                            function qrcodesiswa(nisn){       
                                 $("#tampilqrcode").attr("src","");
                                 $.get("<?=base_url("api/absensiswa");?>",{nisn:nisn,type:'<?=$_GET["type"];?>'})
                                 .done(function(data){

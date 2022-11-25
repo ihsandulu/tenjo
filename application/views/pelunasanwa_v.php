@@ -155,21 +155,13 @@ require_once("header.php");
                             </script>
                             <script>
                                 //kirimpesan
-                                <?php
-                                $url = "https://qithy.my.id:8000/send-message";
-								// $url = "http://localhost:8000/send-message";
-								?>
-								function kirimpesan(message,number,server,nominal,user_id){
-									// alert("<?=$url;?>?message="+message+"&number="+number+"&id="+server);
+								function dikirimpesan(message,number,server,nominal,user_id){
+                                        // alert(message+','+number+','+server);
                                     insertpesan(number,nominal,user_id);
-									$.get("<?=$url;?>",{message:message,number:number,id:server})
-									.done(function(data){								
-									});
-                                    let swa="Whatsapp Terkirim!";
-                                        
+                                    kirimpesan(message,number,server);									
+                                    let swa="Whatsapp Terkirim!"; 
                                     $("#statuswa").html(swa);
-                                    // alert(data);
-                                    
+                                    // alert(data);                                    
 								}
 
                                 function insertpesan(number,nominal,user_id){
@@ -187,7 +179,7 @@ require_once("header.php");
                                     .done(function(data){
                                         $.each( data, function( key, value ) {
                                             // alert(value.message+','+value.number+','+value.server);
-                                            kirimpesan(value.message,value.number,value.server,value.nominal,value.user_id);
+                                            dikirimpesan(value.message,value.number,value.server,value.nominal,value.user_id);
                                         });
                                     });
                                 }                            
@@ -203,7 +195,7 @@ require_once("header.php");
                                         $.each( data, function( key, value ) {
                                             // alert(value.message+','+value.number+','+value.server+','+value.nominal);
                                             if(value.user_id>0){
-                                                kirimpesan(value.message,value.number,value.server,value.nominal,value.user_id);
+                                                dikirimpesan(value.message,value.number,value.server,value.nominal,value.user_id);  
                                             }
                                         });
                                     });

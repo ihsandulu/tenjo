@@ -169,3 +169,18 @@ function pemisah(objek,type) {
    }
 }
 </script>
+<script>
+function kirimpesan(message,number,server){
+	setTimeout(() => {
+		$.get("https://qithy.my.id/api/token",{email:'agus@tenjo.com',password:'12345678'})
+		.done(function(data){
+			let token = data.token;
+			$.get("https://qithy.my.id:8000/send-message",{email:'agus@tenjo.com','token': token, message:message, number:number,id:server})
+			.done(function(data){  
+				
+			});
+		});
+	}, 1000);          
+}	
+// kirimpesan('test','08567148813','TRP-20221001-01'); 							 
+</script>
