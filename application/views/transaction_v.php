@@ -199,13 +199,13 @@
                                         <div id="collapse4" class="body table-responsive">
 										<?php //if(isset($_GET['laporan'])){?>
 										<div class="col-md-12" style="border:#FDDABB dashed 1px; margin-bottom:30px; padding:10px;">
-											 <form id="sp" method="post" target="_blank" class="form-inline" action="<?=site_url("transactionreport_print");?>">
+											 <form id="sp" method="get" target="_blank" class="form-inline" action="<?=site_url("transactionreport_print");?>">
 											  <div class="form-group">
 												<label for="type">Type:</label>
 												<select id="type" name="type" onChange="lihatkelas()">
 													<option value="">All</option>
-													<option value="Debet" <?=($this->input->post("type")=="Debet")?"selected":"";?>>Debet</option>
-													<option value="Kredit" <?=($this->input->post("type")=="Kredit")?"selected":"";?>>Kredit</option>
+													<option value="Debet" <?=($this->input->get("type")=="Debet")?"selected":"";?>>Debet</option>
+													<option value="Kredit" <?=($this->input->get("type")=="Kredit")?"selected":"";?>>Kredit</option>
 												</select>
 												<script>
 													function lihatkelas(){
@@ -218,31 +218,43 @@
 											  <div class="form-group" style="<?=$display;?>" id="divkelas">
 												<label for="kelas">Class:</label>
 												<select id="kelas" name="kelas">
-													<option value="" <?=($this->input->post("kelas")=="")?"selected":"";?>>All</option>
+													<option value="" <?=($this->input->get("kelas")=="")?"selected":"";?>>All</option>
 													<?php $kelas=$this->db
 													->join("kelas","kelas.kelas_id=kelas_sekolah.kelas_id","left")
 													->where("kelas_sekolah.sekolah_id",$this->session->userdata("sekolah_id"))
 													->get("kelas_sekolah");
 													foreach($kelas->result() as $kelas){?>
-													<option value="<?=$kelas->kelas_id;?>" <?=($this->input->post("kelas")==$kelas->kelas_id)?"selected":"";?>><?=$kelas->kelas_name;?></option>
+													<option value="<?=$kelas->kelas_id;?>" <?=($this->input->get("kelas")==$kelas->kelas_id)?"selected":"";?>><?=$kelas->kelas_name;?></option>
 													<?php }?>
 												</select>
-											  </div>	
+											  </div>
+											  	<?php 
+											  	if(isset($_GET['from'])&&$_GET['from']!=""){
+													$from=$this->input->get("from");
+												}else{
+													$from=date("Y-m-d");
+												}
+												if(isset($_GET['to'])&&$_GET['to']!=""){
+													$to=$this->input->get("to");
+												}else{
+													$to=date("Y-m-d");
+												}
+												?>
 											   <div class="form-group">
 												<label for="from">From:</label>
-												<input id="from" name="from" type="date" value="<?=$this->input->post("from");?>"/>
+												<input id="from" name="from" type="date" value="<?=$from;?>"/>
 											  </div>		
 											   <div class="form-group">
-												<label for="from">To:</label>
-												<input id="to" name="to" type="date" value="<?=$this->input->post("to");?>"/>
+												<label for="to">To:</label>
+												<input id="to" name="to" type="date" value="<?=$to;?>"/>
 											  </div>			
 											   <div class="form-group">
 												<label for="nisn">NISN:</label>
-												<input id="nisn" name="nisn" type="text" value="<?=$this->input->post("nisn");?>"/>
+												<input id="nisn" name="nisn" type="text" value="<?=$this->input->get("nisn");?>"/>
 											  </div>			
 											   <div class="form-group">
 												<label for="nama">Nama:</label>
-												<input id="nama" name="nama" type="text" value="<?=$this->input->post("nama");?>"/>
+												<input id="nama" name="nama" type="text" value="<?=$this->input->get("nama");?>"/>
 											  </div>										  
 											 <!--  <button type="submit" class="btn btn-success fa fa-search" onMouseOver="search()"> Search</button> -->											  
 											  <button type="submit" class="btn btn-success fa fa-search" onMouseOver="searchnormal()"> Search</button>	
@@ -262,23 +274,19 @@
 										</div>	
 										<?php //}?>
 										<?php  
-										if(isset($_POST['nisn'])&&$_POST['nisn']!=""){
-											$this->db->where("transaction.user_nisn",$this->input->post("nisn"));
+										if(isset($_GET['nisn'])&&$_GET['nisn']!=""){
+											$this->db->where("transaction.user_nisn",$this->input->get("nisn"));
 										} 
-										if(isset($_POST['nama'])&&$_POST['nama']!=""){
-											$this->db->like("user_name",$this->input->post("nama"),"both");
+										if(isset($_GET['nama'])&&$_GET['nama']!=""){
+											$this->db->like("user_name",$this->input->get("nama"),"both");
 										} 
-										if(isset($_POST['from'])&&$_POST['from']!=""){
-											$this->db->where("SUBSTR(transaction_datetime,1,10) >=",$this->input->post("from"));
-										} 
-										if(isset($_POST['to'])&&$_POST['to']!=""){
-											$this->db->where("SUBSTR(transaction_datetime,1,10) <=",$this->input->post("to"));
+										$this->db->where("SUBSTR(transaction_datetime,1,10) >=",$from);
+										$this->db->where("SUBSTR(transaction_datetime,1,10) <=",$to);
+										if(isset($_GET['type'])&&$_GET['type']!=""){
+											$this->db->where("transaction_type",$this->input->get("type"));
 										}
-										if(isset($_POST['type'])&&$_POST['type']!=""){
-											$this->db->where("transaction_type",$this->input->post("type"));
-										}
-										if(isset($_POST['kelas'])&&$_POST['kelas']!=""&&isset($_POST['type'])&&$_POST['type']!="Debet"){
-											$this->db->where("transaction.kelas_id",$this->input->post("kelas"));
+										if(isset($_GET['kelas'])&&$_GET['kelas']!=""&&isset($_GET['type'])&&$_GET['type']!="Debet"){
+											$this->db->where("transaction.kelas_id",$this->input->get("kelas"));
 										}
 										if($this->session->userdata("sekolah_id")>0){
 											$this->db->where("transaction.sekolah_id",$this->session->userdata("sekolah_id"));
@@ -300,8 +308,9 @@
 										// echo $this->db->last_query();
 										$total = $totalhalaman->num_rows();
 										$pages = ceil($total/$halaman); 
+										$url="?type=".$_GET["type"]."&kelas=".$_GET["kelas"]."&from=".$_GET["from"]."&to=".$_GET["to"]."&nisn=".$_GET["nisn"]."&nama=".$_GET["nama"];
 										for ($i=1; $i<=$pages ; $i++){ ?>
-											<a class="btn btn-xs btn-default halaman" href="?halaman=<?php echo $i; ?>"><?php echo $i; ?></a>
+											<a class="btn btn-xs btn-default halaman" href="<?=$url;?>&halaman=<?php echo $i; ?>"><?php echo $i; ?></a>
 										<?php } ?>		
                                         <table id="dataTabletransaksi" class="table table-condensed table-hover">
                                             <thead>
@@ -325,23 +334,21 @@
                                             </thead>
                                             <tbody> 
                                                 <?php
-												if(isset($_POST['nisn'])&&$_POST['nisn']!=""){
-													$this->db->where("transaction.user_nisn",$this->input->post("nisn"));
+												if(isset($_GET['nisn'])&&$_GET['nisn']!=""){
+													$this->db->where("transaction.user_nisn",$this->input->get("nisn"));
 												} 
-												if(isset($_POST['nama'])&&$_POST['nama']!=""){
-													$this->db->like("user_name",$this->input->post("nama"),"both");
+												if(isset($_GET['nama'])&&$_GET['nama']!=""){
+													$this->db->like("user_name",$this->input->get("nama"),"both");
 												} 
-												if(isset($_POST['from'])&&$_POST['from']!=""){
-													$this->db->where("SUBSTR(transaction_datetime,1,10) >=",$this->input->post("from"));
-												} 
-												if(isset($_POST['to'])&&$_POST['to']!=""){
-													$this->db->where("SUBSTR(transaction_datetime,1,10) <=",$this->input->post("to"));
+												
+												$this->db->where("SUBSTR(transaction_datetime,1,10) >=",$from);
+												$this->db->where("SUBSTR(transaction_datetime,1,10) <=",$to);
+												
+												if(isset($_GET['type'])&&$_GET['type']!=""){
+													$this->db->where("transaction_type",$this->input->get("type"));
 												}
-												if(isset($_POST['type'])&&$_POST['type']!=""){
-													$this->db->where("transaction_type",$this->input->post("type"));
-												}
-												if(isset($_POST['kelas'])&&$_POST['kelas']!=""&&isset($_POST['type'])&&$_POST['type']!="Debet"){
-													$this->db->where("transaction.kelas_id",$this->input->post("kelas"));
+												if(isset($_GET['kelas'])&&$_GET['kelas']!=""&&isset($_GET['type'])&&$_GET['type']!="Debet"){
+													$this->db->where("transaction.kelas_id",$this->input->get("kelas"));
 												}
 												if($this->session->userdata("sekolah_id")>0){
 													$this->db->where("transaction.sekolah_id",$this->session->userdata("sekolah_id"));
@@ -410,6 +417,12 @@
 										<script>
 											$(document).ready(function() {
 												$('#dataTabletransaksi').DataTable( {
+													dom: 'Bfrtip',
+													buttons: [				
+														{ extend: 'pdf', className: 'btn-danger text-white' },
+														{ extend: 'print', className: 'btn-warning text-white' },
+														{ extend: 'excel', className: 'btn-success text-white' }
+													],
 													"order": [[0, 'desc']],
 													"lengthMenu": [[200, "All", 100, 50, 25], [200, "All", 100, 50, 25]]
 												} );

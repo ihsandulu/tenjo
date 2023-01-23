@@ -49,8 +49,22 @@
 
 <script src="<?=base_url('assets/js/bootstrap-datepicker.js');?>"></script>
 <script src="<?=base_url('assets/js/jquery-ui.js');?>"></script>	
-<link href="<?=base_url('assets/css/jquery.dataTables.min.css');?>" rel="stylesheet">
-<script src="<?=base_url("assets/js/jquery.dataTables.min.js");?>"></script>
+
+<!-- <link href="<?=base_url('assets/css/jquery.dataTables.min.css');?>" rel="stylesheet">
+<script src="<?=base_url("assets/js/jquery.dataTables.min.js");?>"></script> -->
+
+
+<link href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css" rel="stylesheet">
+<link href="https://cdn.datatables.net/buttons/2.3.2/css/buttons.dataTables.min.css" rel="stylesheet">
+
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.2/js/buttons.print.min.js"></script>
 
 <!-- ace styles -->
 <link rel="stylesheet" href="<?=base_url("assets/css/ace.min.css");?>" class="ace-main-stylesheet" id="main-ace-style" />
@@ -79,16 +93,29 @@
 	
 <style>
 .border{border:black solid 1px;}
+.text-white{color:white !important;}
 </style>
 
 <script>
 	$(document).ready( function () {
 		 $('#dataTable').DataTable( {
+			dom: 'Bfrtip',
+			buttons: [				
+				{ extend: 'pdf', className: 'btn-danger text-white' },
+				{ extend: 'print', className: 'btn-warning text-white' },
+				{ extend: 'excel', className: 'btn-success text-white' }
+			],
 			"order": [[ 0, "desc" ]],
 			 "iDisplayLength": 25
 		} );
 		
 		 $('#parameter').DataTable( {
+			dom: 'Bfrtip',
+			buttons: [				
+				{ extend: 'pdf', className: 'btn-danger text-white' },
+				{ extend: 'print', className: 'btn-warning text-white' },
+				{ extend: 'excel', className: 'btn-success text-white' }
+			],
 			"order": [[ 3, "asc" ],[ 4, "desc" ],[ 2, "desc" ]],
 			 "iDisplayLength": 25
 		} );

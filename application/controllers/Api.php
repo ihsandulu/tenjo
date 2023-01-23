@@ -1229,44 +1229,61 @@ class api extends CI_Controller {
 	}
 
 	public function tidakhadir(){
-		$absen=$this->db
-		->where("absen_date",date("Y-m-d"))
-		->order_by("user_id","ASC")
-		->get("absen");
-		$userid=array();
-		foreach ($absen->result() as $absen) {$userid[]=$absen->user_id;}
-		$userid1 = implode(",",$userid);
-		$userid2 = explode(",", $userid1);
-		$user=$this->db
-		->select("*,user.user_id AS user_id")
-		->join("server","server.sekolah_id=user.sekolah_id","left")
-		->join("telpon","telpon.user_id=user.user_id","left")
-		->where_not_in("user.user_id",$userid2)
-		->where("telpon.user_id IS NOT NULL",null)
-		->where("telpon.telpon_type","1")
-		->order_by("user.kelas_id","ASC")
-		->order_by("user_name","ASC")
-		->get("user");
-		// echo $this->db->last_query();
-		if($user->num_rows()>0){
-			foreach ($user->result() as $user) {	
-				$message="Siswa ".$user->user_name." tidak hadir di sekolah pada tgl ".date("Y-m-d");
-				$number=$user->telpon_number;
-				$server=$user->server_name;
-				$user_id=$user->user_id;
-				$data1["message"]=$message;
-				$data1["number"]=$number;
-				$data1["server"]=$server;
-				$data1["user_id"]=$user_id;
+
+		$sekolah=$this->db
+		->where("sekolah_id",$this->session->userdata("sekolah_id"))
+		->get("sekolah");	
+		foreach ($sekolah->result() as $sekolah) {
+			$sekolah_notifabsen=$sekolah->sekolah_notifabsen;
+			if(date("H:i")==substr($sekolah_notifabsen,0,5)){
+				$absen=$this->db
+				->where("absen_date",date("Y-m-d"))
+				->order_by("user_id","ASC")
+				->get("absen");
+				$userid=array();
+				foreach ($absen->result() as $absen) {$userid[]=$absen->user_id;}
+				$userid1 = implode(",",$userid);
+				$userid2 = explode(",", $userid1);
+				$user=$this->db
+				->select("*,user.user_id AS user_id")
+				->join("server","server.sekolah_id=user.sekolah_id","left")
+				->join("telpon","telpon.user_id=user.user_id","left")
+				->where_not_in("user.user_id",$userid2)
+				->where("telpon.user_id IS NOT NULL",null)
+				->where("telpon.telpon_type","1")
+				->order_by("user.kelas_id","ASC")
+				->order_by("user_name","ASC")
+				->get("user");
+				// echo $this->db->last_query();
+				if($user->num_rows()>0){
+					foreach ($user->result() as $user) {	
+						$message="Siswa ".$user->user_name." tidak hadir di sekolah pada tgl ".date("Y-m-d");
+						$number=$user->telpon_number;
+						$server=$user->server_name;
+						$user_id=$user->user_id;
+						$data1["message"]=$message;
+						$data1["number"]=$number;
+						$data1["server"]=$server;
+						$data1["user_id"]=$user_id;
+						$data[]=$data1;
+					}			
+				}else{					
+					$data1["message"]="";
+					$data1["number"]="";
+					$data1["server"]="";
+					$data1["user_id"]="";
+					$data[]=$data1;
+				}
+			}else{					
+				$data1["message"]="";
+				$data1["number"]="";
+				$data1["server"]="";
+				$data1["user_id"]="";
 				$data[]=$data1;
-			}			
-		}else{
-			$data1["message"]="";
-			$data1["number"]="";
-			$data1["server"]="";
-			$data1["user_id"]="";
-			$data[]=$data1;
-		}
+			}
+		}		
+
+		
 		$this->djson($data);
 	}
 
