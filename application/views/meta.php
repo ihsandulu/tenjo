@@ -171,16 +171,20 @@ function pemisah(objek,type) {
 </script>
 <script>
 function kirimpesan(message,number,server){
+	let pesankirim='';
 	setTimeout(() => {
 		$.get("https://qithy.my.id/api/token",{email:'agus@tenjo.com',password:'12345678'})
 		.done(function(data){
 			let token = data.token;
 			$.get("https://qithy.my.id:8000/send-message",{email:'agus@tenjo.com','token': token, message:message, number:number,id:server})
-			.done(function(data){  
-				
+			.done(function(data){ 
+				pesankirim="Pesan terkirim pada ".number; 
 			});
 		});
-	}, 1000);          
+		return pesankirim;	
+	}, 1000); 
+	     
 }	
-// kirimpesan('test','08567148813','TRP-20221001-01'); 							 
+// kirimpesan('test','08567148813','TRP-20221001-01'); 
+// kirimpesan('test','08567148813','server'); 							 
 </script>

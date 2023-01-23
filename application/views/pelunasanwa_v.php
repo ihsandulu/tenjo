@@ -157,11 +157,16 @@ require_once("header.php");
                                 //kirimpesan
 								function dikirimpesan(message,number,server,nominal,user_id){
                                         // alert(message+','+number+','+server);
-                                    insertpesan(number,nominal,user_id);
-                                    kirimpesan(message,number,server);									
-                                    let swa="Whatsapp Terkirim!"; 
+                                    $kirimpesan = kirimpesan(message,number,server);
+                                    let swa="";
+                                    if($kirimpesan!="")		{
+                                        swa="Whatsapp Terkirim!";
+                                        insertpesan(number,nominal,user_id);
+                                    }else{
+                                        swa="Whatsapp Tidak Terkirim!";
+                                    }	
                                     $("#statuswa").html(swa);
-                                    // alert(data);                                    
+                                    // alert(kirimpesan);                                    
 								}
 
                                 function insertpesan(number,nominal,user_id){
@@ -177,9 +182,21 @@ require_once("header.php");
                                 function cektelpon(){
                                     $.get("<?=base_url("api/tagihpelunasan");?>",{filter:1})
                                     .done(function(data){
+                                        let notel=1;
                                         $.each( data, function( key, value ) {
                                             // alert(value.message+','+value.number+','+value.server);
-                                            dikirimpesan(value.message,value.number,value.server,value.nominal,value.user_id);
+                                            if(notel<150){
+                                                setTimeout(function () {
+                                                    dikirimpesan(value.message,value.number,value.server,value.nominal,value.user_id);
+                                                    notel=1;
+                                                }, rand(1000,5000));
+                                                notel++;
+                                            }else{
+                                                setTimeout(function () {
+                                                    dikirimpesan(value.message,value.number,value.server,value.nominal,value.user_id);
+                                                    notel=1;
+                                                }, rand(15000,20000));
+                                            }
                                         });
                                     });
                                 }                            
@@ -192,10 +209,24 @@ require_once("header.php");
                                     // alert("<?=base_url("api/tagihpelunasan");?>?filter=0");
                                     $.get("<?=base_url("api/tagihpelunasan");?>",{filter:0})
                                     .done(function(data){
+                                        let notel=1;
+                                        const tetap=2;
                                         $.each( data, function( key, value ) {
                                             // alert(value.message+','+value.number+','+value.server+','+value.nominal);
-                                            if(value.user_id>0){
-                                                dikirimpesan(value.message,value.number,value.server,value.nominal,value.user_id);  
+                                             if(notel<150){
+                                               if(value.user_id>0){
+                                                    setTimeout(function () {
+                                                        dikirimpesan(value.message,value.number,value.server,value.nominal,value.user_id);  
+                                                    }, rand(1000,5000));
+                                                    notel++;
+                                                }                                                
+                                            }else{
+                                                setTimeout(function () {
+                                                   if(value.user_id>0){
+                                                        dikirimpesan(value.message,value.number,value.server,value.nominal,value.user_id); 
+                                                        notel=1; 
+                                                    }
+                                                }, rand(15000,20000));
                                             }
                                         });
                                     });
