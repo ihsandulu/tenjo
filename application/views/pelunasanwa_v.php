@@ -153,57 +153,7 @@ require_once("header.php");
                                 }, 15000);
                                 refreshwa();
                             </script>
-                            <script>
-                                //kirimpesan
-								function dikirimpesan(message,number,server,nominal,user_id){
-                                        // alert(message+','+number+','+server);
-                                    $kirimpesan = kirimpesan(message,number,server);
-                                    let swa="";
-                                    if($kirimpesan!="")		{
-                                        swa="Whatsapp Terkirim!";
-                                        insertpesan(number,nominal,user_id);
-                                    }else{
-                                        swa="Whatsapp Tidak Terkirim!";
-                                    }	
-                                    $("#statuswa").html(swa);
-                                    // alert(kirimpesan);                                    
-								}
-
-                                function insertpesan(number,nominal,user_id){
-									// alert("<?=base_url("api/insertpesan");?>?nominal="+nominal+"&number="+number+"&user_id="+user_id);
-                                    $.get("<?=base_url("api/insertpesan");?>",{number:number,nominal:nominal,user_id:user_id})
-                                    .done(function(data){
-                                        // alert(data);
-                                        refreshwa();
-                                    });
-                                }
-
-                                //cronjob    
-                                function cektelpon(){
-                                    $.get("<?=base_url("api/tagihpelunasan");?>",{filter:1})
-                                    .done(function(data){
-                                        let notel=1;
-                                        $.each( data, function( key, value ) {
-                                            // alert(value.message+','+value.number+','+value.server);
-                                            if(notel<150){
-                                                setTimeout(function () {
-                                                    dikirimpesan(value.message,value.number,value.server,value.nominal,value.user_id);
-                                                    notel=1;
-                                                }, rand(1000,5000));
-                                                notel++;
-                                            }else{
-                                                setTimeout(function () {
-                                                    dikirimpesan(value.message,value.number,value.server,value.nominal,value.user_id);
-                                                    notel=1;
-                                                }, rand(15000,20000));
-                                            }
-                                        });
-                                    });
-                                }                            
-                                setInterval(() => {
-                                    cektelpon();
-                                }, 60000);
-                                
+                            <script>  
                                 //kirim sekarang
                                 function kirimsekarang(){
                                     // alert("<?=base_url("api/tagihpelunasan");?>?filter=0");

@@ -11,6 +11,7 @@ class login_M extends CI_Model {
 			if($this->input->post("sekolah_id")==""){$sekolahid=0;}else{$sekolahid=$this->input->post("sekolah_id");}
 			$user1=$this->db
 			->join("server","server.sekolah_id=user.sekolah_id","left")
+			->join("sekolah","sekolah.sekolah_id=user.sekolah_id","left")
 			->group_start()
 			->where("user_name",$this->input->post("name"))
 			->or_where("user_nik",$this->input->post("name"))
@@ -28,6 +29,11 @@ class login_M extends CI_Model {
 						//echo $this->session->userdata($field);
 					}	
 					foreach($this->db->list_fields('server') as $field)
+					{
+						$this->session->set_userdata($field,$user->$field);						
+						//echo $this->session->userdata($field);
+					}		
+					foreach($this->db->list_fields('sekolah') as $field)
 					{
 						$this->session->set_userdata($field,$user->$field);						
 						//echo $this->session->userdata($field);
