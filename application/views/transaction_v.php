@@ -308,7 +308,37 @@
 										// echo $this->db->last_query();
 										$total = $totalhalaman->num_rows();
 										$pages = ceil($total/$halaman); 
-										$url="?type=".$_GET["type"]."&kelas=".$_GET["kelas"]."&from=".$_GET["from"]."&to=".$_GET["to"]."&nisn=".$_GET["nisn"]."&nama=".$_GET["nama"];
+										if(isset($_GET["type"])){
+											$type=$_GET["type"];
+										}else{
+											$type="";
+										}
+										if(isset($_GET["kelas"])){
+											$kelas=$_GET["kelas"];
+										}else{
+											$kelas="";
+										}
+										if(isset($_GET["from"])){
+											$from=$_GET["from"];
+										}else{
+											$from="";
+										}
+										if(isset($_GET["to"])){
+											$to=$_GET["to"];
+										}else{
+											$to="";
+										}
+										if(isset($_GET["nisn"])){
+											$nisn=$_GET["nisn"];
+										}else{
+											$nisn="";
+										}
+										if(isset($_GET["nama"])){
+											$nama=$_GET["nama"];
+										}else{
+											$nama="";
+										}
+										$url="?type=".$type."&kelas=".$kelas."&from=".$from."&to=".$to."&nisn=".$nisn."&nama=".$nama;
 										for ($i=1; $i<=$pages ; $i++){ ?>
 											<a class="btn btn-xs btn-default halaman" href="<?=$url;?>&halaman=<?php echo $i; ?>"><?php echo $i; ?></a>
 										<?php } ?>		
