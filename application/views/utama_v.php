@@ -376,13 +376,23 @@
                         </script>
                     </div>                  
                     <div class="col-md-5 well">
+                        <h3 class="">Jam kirim notifikasi tidak masuk sekolah.</h3>
+                        <?php 
+                        $kelas_sekolah=$this->db
+                        ->join("kelas","kelas.kelas_id=kelas_sekolah.kelas_id","left")
+                        ->where("sekolah_id",$this->session->userdata("sekolah_id"))
+                        ->get("kelas_sekolah");	
+                        foreach ($kelas_sekolah->result() as $kelas_sekolah) {
+                        ?>
                         <form method="post">
                             <div class="form-group">
-                                <label for="sekolah_notifabsen">Jam kirim notifikasi tidak masuk sekolah.</label>
-                                <input type="time" class="form-control" id="sekolah_notifabsen" name="sekolah_notifabsen" value="<?=$sekolah_notifabsen;?>">
+                                <label for="kelas_sekolah_notifabsen">Kelas <?=$kelas_sekolah->kelas_name;?></label>
+                                <input type="time" class="form-control" id="kelas_sekolah_notifabsen" name="kelas_sekolah_notifabsen" value="<?=$kelas_sekolah->kelas_sekolah_notifabsen;?>">
+                                <input type="hidden" name="kelas_sekolah_id" value="<?=$kelas_sekolah->kelas_sekolah_id;?>"/>
                             </div>
                             <button type="submit" class="btn btn-primary">Submit</button>
                         </form>
+                        <?php }?>
                     </div> 
                 </div>
             </div>

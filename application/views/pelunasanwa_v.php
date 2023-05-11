@@ -167,7 +167,7 @@ require_once("header.php");
                                                if(value.user_id>0){
                                                     setTimeout(function () {
                                                         dikirimpesan(value.message,value.number,value.server,value.nominal,value.user_id);  
-                                                    }, rand(1000,5000));
+                                                    }, <?=rand(1000,5000);?>);
                                                     notel++;
                                                 }                                                
                                             }else{
@@ -176,7 +176,7 @@ require_once("header.php");
                                                         dikirimpesan(value.message,value.number,value.server,value.nominal,value.user_id); 
                                                         notel=1; 
                                                     }
-                                                }, rand(15000,20000));
+                                                }, <?=rand(15000,20000);?>);
                                             }
                                         });
                                     });

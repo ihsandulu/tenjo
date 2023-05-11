@@ -11,12 +11,13 @@ class utama_M extends CI_Model {
 
 		
 		
-		if(isset($_POST["sekolah_notifabsen"])){
+		if(isset($_POST["kelas_sekolah_notifabsen"])){
 			$this->db
 			->where("sekolah_id",$this->session->userdata("sekolah_id"))
-			->set("sekolah_notifabsen",$this->input->post("sekolah_notifabsen"))
-			->update("sekolah");
-			// echo $this->db->last_query();
+			->where("kelas_sekolah_id",$this->input->post("kelas_sekolah_id"))
+			->set("kelas_sekolah_notifabsen",$this->input->post("kelas_sekolah_notifabsen"))
+			->update("kelas_sekolah");
+			// echo $this->db->last_query();die;
 		}
 
 

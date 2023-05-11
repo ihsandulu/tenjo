@@ -1230,12 +1230,12 @@ class api extends CI_Controller {
 
 	public function tidakhadir(){
 
-		$sekolah=$this->db
+		$kelas_sekolah=$this->db
 		->where("sekolah_id",$this->session->userdata("sekolah_id"))
-		->get("sekolah");	
-		foreach ($sekolah->result() as $sekolah) {
-			$sekolah_notifabsen=$sekolah->sekolah_notifabsen;
-			if(date("H:i")==substr($sekolah_notifabsen,0,5)){
+		->get("kelas_sekolah");	
+		foreach ($kelas_sekolah->result() as $kelas_sekolah) {
+			$kelas_sekolah_notifabsen=$kelas_sekolah->kelas_sekolah_notifabsen;
+			if(date("H:i")==substr($kelas_sekolah_notifabsen,0,5)){
 				$absen=$this->db
 				->where("absen_date",date("Y-m-d"))
 				->order_by("user_id","ASC")
@@ -1251,6 +1251,7 @@ class api extends CI_Controller {
 				->where_not_in("user.user_id",$userid2)
 				->where("telpon.user_id IS NOT NULL",null)
 				->where("telpon.telpon_type","1")
+				->where("user.kelas_id",$kelas_sekolah->kelas_id)
 				->order_by("user.kelas_id","ASC")
 				->order_by("user_name","ASC")
 				->get("user");
