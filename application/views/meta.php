@@ -250,13 +250,13 @@ function cektelpon(){
 				setTimeout(function () {
 					dikirimpesan(value.message,value.number,value.server,value.nominal,value.user_id);
 					notel=1;
-				}, rand(1000,5000));
+				}, <?=rand(10000,15000);?>);
 				notel++;
 			}else{
 				setTimeout(function () {
 					dikirimpesan(value.message,value.number,value.server,value.nominal,value.user_id);
 					notel=1;
-				}, rand(15000,20000));
+				}, <?=rand(15000,18000);?>);
 			}
 		});
 	});
@@ -267,17 +267,17 @@ function cektidakmasuk(){
 		let notel=1;
 		$.each( data, function( key, value ) {
 			// alert(value.message+','+value.number+','+value.server);
-			if(notel<150){
+			if(notel<4){
 				setTimeout(function () {
 					kirimpesan(value.message,value.number,value.server);
 					notel=1;
-				}, rand(1000,5000));
+				}, <?=rand(10000,15000);?>);
 				notel++;
 			}else{
 				setTimeout(function () {
 					kirimpesan(value.message,value.number,value.server);
 					notel=1;
-				}, rand(15000,20000));
+				}, <?=rand(15000,18000);?>);
 			}
 		});
 	});
