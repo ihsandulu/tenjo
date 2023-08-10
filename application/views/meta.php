@@ -200,7 +200,7 @@ function pemisah(objek,type) {
 function kirimpesan(message,number,server){
 	let pesankirim='';
 	setTimeout(() => {
-		$.get("https://qithy.my.id/api/token",{email:'agus@tenjo.com',password:'12345678'})
+		$.get("https://qithy.my.id/api/token",{email:'ihsan.dulu@gmail.com',password:'5Ahlussunnah6'})
 		.done(function(data){
 			let token = data.token;
 			$.get("https://qithy.my.id:8000/send-message",{email:'agus@tenjo.com','token': token, message:message, number:number,id:server})
