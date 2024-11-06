@@ -26,6 +26,13 @@
                 <div class="page-header">
                     <h1>Telephone</h1>
 					<?php if(!isset($_POST['new'])&&!isset($_POST['edit'])){?>
+                    <?php if(isset($_GET["user_id"])){?>
+                    <form action="<?=base_url("siswa");?>" method="post" class="col-md-2" style="margin-top:-30px; float:right;">							
+                       
+                        <button class="btn btn-warning btn-block btn-sm" value="OK" style="">Back</button>
+                       
+                    </form>
+                    <?php }?>
                     
                     <form method="post" class="col-md-2" style="margin-top:-30px; float:right;">							
                        
@@ -50,7 +57,7 @@
                                       <div class="form-group">
                                         <label class="control-label col-sm-2" for="user_nisn">NISN:</label>
                                         <div class="col-sm-10">
-                                          <input type="user_name" class="form-control" id="user_nisn" name="user_nisn" placeholder="Enter NISN" value="<?=$user_nisn;?>">
+                                          <input type="user_name" class="form-control" id="user_nisn" name="user_nisn" placeholder="Enter NISN" value="<?=($user_nisn=="")?$_GET["user_nisn"]:$user_nisn;?>">
                                         </div>							  
                                     </div>
                                     <div class="col-md-offset-2 col-md-10 alert alert-danger alert-dismissable fade in" id="cekuser" style="display:none;">

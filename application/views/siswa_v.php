@@ -216,6 +216,7 @@
                                                         <form method="get" class="col-md-4" style="padding:0px;" action="<?=base_url("telpon");?>">
                                                             <button class="btn btn-success " value="OK"><span class="fa fa-phone" style="color:white;"></span> </button>
                                                             <input type="hidden" name="user_id" value="<?=$user->user_id;?>"/>
+                                                            <input type="hidden" name="user_nisn" value="<?=$user->user_nisn;?>"/>
                                                         </form>
 
                                                         <form method="post" class="col-md-4" style="padding:0px;">
